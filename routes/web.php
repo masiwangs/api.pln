@@ -28,4 +28,13 @@ $router->group(['prefix' => 'v1'], function() use($router) {
     $router->get('/prks/{prk_id}', 'PrkController@show');
     $router->post('/prks/{prk_id}', 'PrkController@update');
     $router->delete('/prks/{prk_id}', 'PrkController@delete');
+
+    $router->get('/prks/{prk_id}/jasas', 'PrkJasaController@index');
+    $router->post('/prks/{prk_id}/jasas', 'PrkJasaController@create');
+    $router->delete('/prks/{prk_id}/jasas/{jasa_id}', 'PrkJasaController@delete');
+
+    $router->get('/materials', 'MaterialController@index');
+    $router->post('/materials', 'MaterialController@create');
+    $router->post('/materials/{material_id}', 'MaterialController@update');
+    $router->delete('/materials/{material_id}', 'MaterialController@delete');
 });

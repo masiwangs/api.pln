@@ -15,11 +15,12 @@ class CreatePrksTable extends Migration
     {
         Schema::create('prks', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_project');
-            $table->string('no_prk');
-            $table->integer('basket');
+            $table->string('nama_project')->nullable();
+            $table->string('nomor_prk')->nullable();
+            $table->string('lot_number')->nullable();
+            $table->tinyInteger('prioritas')->default(0);
             $table->integer('project_id');
-            $table->integer('created_by');
+            $table->enum('basket', [1, 2, 3])->default(1);
             $table->timestamps();
         });
     }
