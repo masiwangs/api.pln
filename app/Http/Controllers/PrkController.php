@@ -24,7 +24,7 @@ class PrkController extends Controller
 
     //
     public function index(Request $request) {
-        $prks = Prk::get();
+        $prks = Prk::with(['jasas', 'materials'])->get();
         return $this->response->success($prks);
     }
 
@@ -81,6 +81,15 @@ class PrkController extends Controller
         $delete = $prk->delete();
 
         if($delete) {
+            $jasas = PrkJasa::where('prk_id', $prk_id)->get();
+            foreach ($jasas as $jasa) {
+                $jasa->delete();
+            }
+            
+            $materials = PrkMaterial::where('prk_id', $prk_id)->get();
+            foreach ($materials as $material) {
+                $material->delete();
+            }
             return $this->response->success();
         }
 

@@ -17,11 +17,11 @@ class Prk extends Model
         'created_by'
     ];
 
-    // public function materials() {
-    //     return $this->hasMany(PrkMaterial::class);
-    // }
+    public function materials() {
+        return $this->hasMany(PrkMaterial::class);
+    }
 
-    // public function jasas() {
-    //     return $this->hasMany(PrkJasa::class);
-    // }
+    public function jasas() {
+        return $this->hasMany(PrkJasa::class);
+    }
 }
