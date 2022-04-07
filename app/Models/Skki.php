@@ -16,9 +16,9 @@ class Skki extends Model
         'basket',
     ];
 
-    // public function materials() {
-    //     return $this->hasMany(PrkMaterial::class);
-    // }
+    public function materials() {
+        return $this->hasMany(SkkiMaterial::class);
+    }
 
     public function jasas() {
         return $this->hasMany(SkkiJasa::class);

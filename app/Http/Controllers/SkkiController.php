@@ -75,8 +75,7 @@ class SkkiController extends Controller
     }
 
     public function index(Request $request) {
-        // $prks = Skki::with(['jasas', 'materials'])->get();
-        $skkis = Skki::get();
+        $skkis = Skki::with(['jasas', 'materials'])->get();
         return $this->response->success($skkis);
     }
 
@@ -95,7 +94,7 @@ class SkkiController extends Controller
         }
 
         // save jasa & material
-        $this->_saveJasasAndMaterial(null, $request->prks);
+        $this->_saveJasasAndMaterial($skki->id, $request->prks);
         
         return $this->response->created($skki);
     }
