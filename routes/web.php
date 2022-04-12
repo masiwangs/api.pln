@@ -51,6 +51,18 @@ $router->group(['prefix' => 'v1'], function() use($router) {
     $router->get('/skkis/{skki_id}/materials', 'SkkiMaterialController@index');
     $router->delete('/skkis/{skki_id}/materials/{material_id}', 'SkkiMaterialController@delete');
 
+    // pengadaan
+    $router->get('/pengadaans', 'PengadaanController@index');
+    $router->post('/pengadaans', 'PengadaanController@create');
+    $router->post('/pengadaans/{pengadaan_id}', 'PengadaanController@update');
+    $router->delete('/pengadaans/{pengadaan_id}', 'PengadaanController@delete');
+    
+    $router->get('/pengadaans/{pengadaan_id}/prk_skkis', 'PengadaanPrkSkkiController@index');
+
+    $router->get('/pengadaans/{pengadaan_id}/jasas', 'PengadaanJasaController@index');
+    
+    $router->get('/pengadaans/{pengadaan_id}/materials', 'PengadaanMaterialController@index');
+
     $router->get('/materials', 'MaterialController@index');
     $router->post('/materials', 'MaterialController@create');
     $router->post('/materials/{material_id}', 'MaterialController@update');
