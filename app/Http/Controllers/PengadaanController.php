@@ -77,13 +77,14 @@ class PengadaanController extends Controller
                 $pengadaan_materials = PengadaanMaterial::insert($pengadaan_materials);
             }
             $pengadaan = Pengadaan::find($pengadaan_id);
-            $pengadaan->update([
+            $update_pengadaan = [
                 'nomor_wbs_jasas' => json_encode($nomor_wbs_jasas),
                 'nomor_wbs_materials' => json_encode($nomor_wbs_materials),
-            ]);
+            ];
+            $pengadaan->update($update_pengadaan);
         }
 
-        return true;
+        return $update_pengadaan;
     }
 
     protected function _saveJasasBasedWbsJasa($pengadaan_id, $nomor_wbs_jasas) {
@@ -200,7 +201,12 @@ class PengadaanController extends Controller
         }
 
         // save jasa & material
-        $this->_saveJasasAndMaterial($pengadaan->id, $request->nomor_prk_skkis);
+        $updated_pengadaan = $this->_saveJasasAndMaterialBasedPrkSkki($pengadaan->id, $request->nomor_prk_skkis);
+
+        if($updated_pengadaan) {
+            $pengadaan['nomor_wbs_jasas'] = $updated_pengadaan['nomor_wbs_jasas'];
+            $pengadaan['nomor_wbs_materials'] = $updated_pengadaan['nomor_wbs_materials'];
+        }
         
         return $this->response->created($pengadaan);
     }
@@ -254,7 +260,11 @@ class PengadaanController extends Controller
         if($update) {
             // save jasa & material karena perubahan prk_skkis
             if($old_pengadaan['nomor_prk_skkis'] !== $data['nomor_prk_skkis']) {
-                $this->_saveJasasAndMaterialBasedPrkSkki($pengadaan_id, $update->nomor_prk_skkis);
+                $updated_pengadaan = $this->_saveJasasAndMaterialBasedPrkSkki($pengadaan_id, $update->nomor_prk_skkis);
+                if($updated_pengadaan) {
+                    $pengadaan['nomor_wbs_jasas'] = $updated_pengadaan['nomor_wbs_jasas'];
+                    $pengadaan['nomor_wbs_materials'] = $updated_pengadaan['nomor_wbs_materials'];
+                }
             }
 
             // save jasa karena perubahan wbs
