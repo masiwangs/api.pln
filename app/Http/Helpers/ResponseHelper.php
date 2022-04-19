@@ -8,8 +8,8 @@ class ResponseHelper
         return response()->json(['message' => 'not found'], 404);
     }
 
-    public function bad_request() {
-        return response()->json(['message' => 'bad request'], 400);
+    public function bad_request($message = 'bad request') {
+        return response()->json(['message' => $message], 400);
     }
 
     public function success($data = null) {

@@ -14,6 +14,7 @@ class Pengadaan extends Model
         'no_pr',
         'nama_project',
         'status',
+        'basket',
         'nomor_wbs_jasas',
         'nomor_wbs_materials'
     ];

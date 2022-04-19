@@ -14,6 +14,9 @@ class Kontrak extends Model
         'tanggal_akhir',
         'pelaksana',
         'direksi_pelaksana',
+        'spk',
+        'status',
+        'progress',
         'pengadaan_id',
         'is_amandemen',
         'versi_amandemen',
@@ -25,7 +28,19 @@ class Kontrak extends Model
         return $this->hasMany(KontrakMaterial::class);
     }
 
+    public function material_transactions() {
+        return $this->hasMany(PelaksanaanMaterialTransaction::class);
+    }
+
     public function jasas() {
         return $this->hasMany(KontrakJasa::class);
+    }
+
+    public function jasa_transactions() {
+        return $this->hasMany(PelaksanaanJasaTransaction::class);
+    }
+
+    public function pembayarans() {
+        return $this->hasMany(Pembayaran::class);
     }
 }

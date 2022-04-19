@@ -5,15 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
-class KontrakMaterial extends Model
+class Pembayaran extends Model
 {
     protected $fillable = [
-        'kode_normalisasi',
-        'nama_material',
-        'harga',
-        'jumlah',
-        'stock',
-        'satuan',
+        'nominal',
+        'keterangan',
         'kontrak_id'
     ];
 }

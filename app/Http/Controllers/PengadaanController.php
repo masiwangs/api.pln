@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kontrak;
 use App\Models\Pengadaan;
 use App\Models\Prk;
 use App\Models\Skki;
+use App\Models\KontrakJasa;
+use App\Models\KontrakMaterial;
 use App\Models\PengadaanJasa;
 use App\Models\PengadaanMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Http\Helpers\AntiNull;
 use App\Http\Helpers\ResponseHelper;
 
 class PengadaanController extends Controller
 {
-    protected $response;
+    protected $response, $antinull;
     /**
      * Create a new controller instance.
      *
@@ -22,6 +26,7 @@ class PengadaanController extends Controller
     public function __construct()
     {
         $this->response = new ResponseHelper;
+        $this->antinull = new AntiNull;
     }
 
     protected function _saveJasasAndMaterialBasedPrkSkki($pengadaan_id, $prk_skkis) {
@@ -82,9 +87,10 @@ class PengadaanController extends Controller
                 'nomor_wbs_materials' => json_encode($nomor_wbs_materials),
             ];
             $pengadaan->update($update_pengadaan);
+
+            return $update_pengadaan;
         }
 
-        return $update_pengadaan;
     }
 
     protected function _saveJasasBasedWbsJasa($pengadaan_id, $nomor_wbs_jasas) {
@@ -162,37 +168,7 @@ class PengadaanController extends Controller
     }
 
     public function create(Request $request) {
-        $data = [];
-        if($request->nomor_prk_skkis && $request->nomor_prk_skkis !== 'null') {
-            $data['nomor_prk_skkis'] = $request->nomor_prk_skkis;
-        }
-        if($request->nodin && $request->nodin !== 'null') {
-            $data['nodin'] = $request->nodin;
-        }
-        if($request->tanggal_nodin && $request->tanggal_nodin !== 'null') {
-            $data['tanggal_nodin'] = $request->tanggal_nodin;
-        }
-        if($request->nomor_pr && $request->nomor_pr !== 'null') {
-            $data['nomor_pr'] = $request->nomor_pr;
-        }
-        if($request->nama_project && $request->nama_project !== 'null') {
-            $data['nama_project'] = $request->nama_project;
-        }
-        if($request->tanggal_awal && $request->tanggal_awal !== 'null') {
-            $data['tanggal_awal'] = $request->tanggal_awal;
-        }
-        if($request->tanggal_akhir && $request->tanggal_akhir !== 'null') {
-            $data['tanggal_akhir'] = $request->tanggal_akhir;
-        }
-        if($request->status && $request->status !== 'null') {
-            $data['status'] = $request->status;
-        }
-        if($request->nomor_wbs_jasas && $request->nomor_wbs_jasas !== 'null') {
-            $data['nomor_wbs_jasas'] = $request->nomor_wbs_jasas;
-        }
-        if($request->nomor_wbs_materials && $request->nomor_wbs_materials !== 'null') {
-            $data['nomor_wbs_materials'] = $request->nomor_wbs_materials;
-        }
+        $data = $this->antinull->request($request->all());
 
         $pengadaan = Pengadaan::create($data);
 
@@ -201,54 +177,33 @@ class PengadaanController extends Controller
         }
 
         // save jasa & material
-        $updated_pengadaan = $this->_saveJasasAndMaterialBasedPrkSkki($pengadaan->id, $request->nomor_prk_skkis);
+        if(isset($data['nomor_prk_skkis'])) {
+            $updated_pengadaan = $this->_saveJasasAndMaterialBasedPrkSkki($pengadaan->id, $request->nomor_prk_skkis);
 
-        if($updated_pengadaan) {
-            $pengadaan['nomor_wbs_jasas'] = $updated_pengadaan['nomor_wbs_jasas'];
-            $pengadaan['nomor_wbs_materials'] = $updated_pengadaan['nomor_wbs_materials'];
+            if($updated_pengadaan) {
+                $pengadaan['nomor_wbs_jasas'] = $updated_pengadaan['nomor_wbs_jasas'];
+                $pengadaan['nomor_wbs_materials'] = $updated_pengadaan['nomor_wbs_materials'];
+            }
         }
         
         return $this->response->created($pengadaan);
     }
 
-    public function show($skki_id) {
-        $skki = Skki::with(['jasas'])->find($skki_id);
+    public function show($pengadaan_id) {
+        $pengadaan = Pengadaan::with(['jasas', 'materials'])->find($pengadaan_id);
 
-        if(!$skki) {
+        if(!$pengadaan) {
             return $this->response->not_found();
         }
         
-        return $this->response->success($skki);
+        return $this->response->success($pengadaan);
     }
 
     public function update($pengadaan_id, Request $request) {
+        $start = microtime(true);
         $pengadaan = Pengadaan::find($pengadaan_id);
 
-        $data = [];
-        if($request->nomor_prk_skkis && $request->nomor_prk_skkis !== 'null') {
-            $data['nomor_prk_skkis'] = $request->nomor_prk_skkis;
-        }
-        if($request->nodin && $request->nodin !== 'null') {
-            $data['nodin'] = $request->nodin;
-        }
-        if($request->tanggal_nodin && $request->tanggal_nodin !== 'null') {
-            $data['tanggal_nodin'] = $request->tanggal_nodin;
-        }
-        if($request->nomor_pr && $request->nomor_pr !== 'null') {
-            $data['nomor_pr'] = $request->nomor_pr;
-        }
-        if($request->nama_project && $request->nama_project !== 'null') {
-            $data['nama_project'] = $request->nama_project;
-        }
-        if($request->status && $request->status !== 'null') {
-            $data['status'] = $request->status;
-        }
-        if($request->nomor_wbs_jasas && $request->nomor_wbs_jasas !== 'null') {
-            $data['nomor_wbs_jasas'] = $request->nomor_wbs_jasas;
-        }
-        if($request->nomor_wbs_materials && $request->nomor_wbs_materials !== 'null') {
-            $data['nomor_wbs_materials'] = $request->nomor_wbs_materials;
-        }
+        $data = $this->antinull->request($request->all());
 
         if(!$pengadaan) {
             return $this->response->not_found();
@@ -277,7 +232,39 @@ class PengadaanController extends Controller
                 $this->_saveMaterialsBasedWbsMaterial($pengadaan_id, $update->nomor_wbs_materials);
             }
 
-            return $this->response->created($update);
+            // if update status = proses. delete kontrak
+            if(isset($data['status'])) {
+                if($data['status'] == 'proses') {
+                    $kontraks = Kontrak::where('pengadaan_id', $pengadaan->id)->get();
+                    foreach ($kontraks as $kontrak) {
+                        $kontrak_jasas = KontrakJasa::where('kontrak_id', $kontrak->id)->get();
+                        foreach ($kontrak_jasas as $kontrak_jasa) {
+                            $kontrak_jasa->delete();
+                        }
+                        $kontrak_materials = KontrakMaterial::where('kontrak_id', $kontrak->id)->get();
+                        foreach ($kontrak_materials as $kontrak_material) {
+                            $kontrak_material->delete();
+                        }
+                        $kontrak->delete();
+                    }
+                }
+            }
+
+            $wbs_jasas_option = [];
+            $wbs_materials_option = [];
+            foreach (json_decode($data['nomor_prk_skkis']) as $prk_skki) {
+                $prk_skkis_result = Skki::where('nomor_prk_skki', $prk_skki)->get();
+                foreach ($prk_skkis_result as $prk_skki_result) {
+                    array_push($wbs_jasas_option, $prk_skki_result->nomor_wbs_jasa);
+                    array_push($wbs_materials_option, $prk_skki_result->nomor_wbs_material);
+                }
+            }
+
+            $pengadaan_updated = Pengadaan::with(['materials', 'jasas'])->find($pengadaan_id)->toArray();
+            $pengadaan_updated['wbs_jasas_option'] = $wbs_jasas_option;
+            $pengadaan_updated['wbs_materials_option'] = $wbs_materials_option;
+            $pengadaan_updated['timing'] = microtime(true) - $start;
+            return $this->response->created($pengadaan_updated);
         }
 
 

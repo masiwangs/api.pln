@@ -8,11 +8,12 @@ use App\Models\SkkiJasa;
 use App\Models\SkkiMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Http\Helpers\AntiNullHelper;
 use App\Http\Helpers\ResponseHelper;
 
 class SkkiController extends Controller
 {
-    protected $response;
+    protected $antinull, $response;
     /**
      * Create a new controller instance.
      *
@@ -20,6 +21,7 @@ class SkkiController extends Controller
      */
     public function __construct()
     {
+        $this->antinull = new AntiNullHelper;
         $this->response = new ResponseHelper;
     }
 
@@ -80,27 +82,24 @@ class SkkiController extends Controller
     }
 
     public function create(Request $request) {
-        $skki = Skki::create($request->only(
-            'nomor_skki', 
-            'nomor_prk_skki', 
-            'nomor_wbs_jasa',
-            'nomor_wbs_material',
-            'prks', 
-            'basket'
-        ));
+        $data = $this->antinull->request($request->all());
+
+        $skki = Skki::create($data);
 
         if(!$skki) {
             $this->response->bad_request();
         }
 
         // save jasa & material
-        $this->_saveJasasAndMaterial($skki->id, $request->prks);
+        if($request->prks) {
+            $this->_saveJasasAndMaterial($skki->id, $request->prks);
+        }
         
         return $this->response->created($skki);
     }
 
     public function show($skki_id) {
-        $skki = Skki::with(['jasas'])->find($skki_id);
+        $skki = Skki::with(['jasas', 'materials'])->find($skki_id);
 
         if(!$skki) {
             return $this->response->not_found();
@@ -116,7 +115,9 @@ class SkkiController extends Controller
             return $this->response->not_found();
         }
 
-        $update = tap($skki)->update($request->all());
+        $data = $this->antinull->request($request->all());
+
+        $update = tap($skki)->update($data);
 
         if($update) {
             // save jasa & material

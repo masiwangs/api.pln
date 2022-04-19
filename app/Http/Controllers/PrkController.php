@@ -46,7 +46,7 @@ class PrkController extends Controller
     }
 
     public function show($prk_id) {
-        $prk = Prk::find($prk_id);
+        $prk = Prk::with(['jasas', 'materials'])->find($prk_id);
 
         if(!$prk) {
             return $this->response->not_found();

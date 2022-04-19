@@ -54,6 +54,7 @@ $router->group(['prefix' => 'v1'], function() use($router) {
     // pengadaan
     $router->get('/pengadaans', 'PengadaanController@index');
     $router->post('/pengadaans', 'PengadaanController@create');
+    $router->get('/pengadaans/{pengadaan_id}', 'PengadaanController@show');
     $router->post('/pengadaans/{pengadaan_id}', 'PengadaanController@update');
     $router->delete('/pengadaans/{pengadaan_id}', 'PengadaanController@delete');
     
@@ -62,6 +63,26 @@ $router->group(['prefix' => 'v1'], function() use($router) {
     $router->get('/pengadaans/{pengadaan_id}/jasas', 'PengadaanJasaController@index');
     
     $router->get('/pengadaans/{pengadaan_id}/materials', 'PengadaanMaterialController@index');
+
+    // kontrak
+    $router->get('/kontraks', 'KontrakController@index');
+    $router->post('/kontraks', 'KontrakController@create');
+    $router->get('/kontraks/{kontrak_id}', 'KontrakController@show');
+    $router->post('/kontraks/{kontrak_id}', 'KontrakController@update');
+    
+    // pelaksanaan
+    $router->get('/pelaksanaans', 'PelaksanaanController@index');
+    $router->get('/pelaksanaans/{kontrak_id}', 'PelaksanaanController@show');
+    $router->post('/pelaksanaans/{kontrak_id}', 'PelaksanaanController@update');
+
+    $router->post('/pelaksanaans/{kontrak_id}/transaction/material', 'PelaksanaanController@materialTransaction');
+    $router->post('/pelaksanaans/{kontrak_id}/transaction/jasa', 'PelaksanaanController@jasaTransaction');
+    $router->delete('/pelaksanaans/{kontrak_id}/transaction/jasa/{jasa_id}', 'PelaksanaanController@deleteJasaTransaction');
+
+    // pembayaran
+    $router->get('/pembayarans', 'PembayaranController@index');
+    $router->get('/pembayarans/{kontrak_id}', 'PembayaranController@show');
+    $router->post('/pembayarans/{kontrak_id}', 'PembayaranController@create');
 
     $router->get('/materials', 'MaterialController@index');
     $router->post('/materials', 'MaterialController@create');
