@@ -49,4 +49,18 @@ class PembayaranController extends Controller
 
         return $this->response->success($pembayaran);
     }
+
+    public function deleteByKontrak($kontrak_id) {
+        $pembayarans = Pembayaran::where('kontrak_id', $kontrak_id)->get();
+
+        foreach ($pembayarans as $pembayaran) {
+            $pembayaran->delete();
+        }
+
+        if(!$pembayaran) {
+            $this->response->not_found();
+        }
+
+        return $this->response->success();
+    }
 }

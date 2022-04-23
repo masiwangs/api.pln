@@ -24,7 +24,12 @@ class PrkController extends Controller
 
     //
     public function index(Request $request) {
-        $prks = Prk::with(['jasas', 'materials'])->get();
+        $prks = Prk::with(['jasas', 'materials']);
+
+        if($request->basket) {
+            $prks = $prks->where('basket', $request->basket);
+        }
+        $prks = $prks->get();
         return $this->response->success($prks);
     }
 

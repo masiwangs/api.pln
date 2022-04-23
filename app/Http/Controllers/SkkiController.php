@@ -63,6 +63,7 @@ class SkkiController extends Controller
                         'harga' => $material->harga,
                         'satuan' => $material->satuan,
                         'skki_id' => $skki_id,
+                        'prk_id' => $prk->id,
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now()
                     ]);

@@ -69,6 +69,7 @@ $router->group(['prefix' => 'v1'], function() use($router) {
     $router->post('/kontraks', 'KontrakController@create');
     $router->get('/kontraks/{kontrak_id}', 'KontrakController@show');
     $router->post('/kontraks/{kontrak_id}', 'KontrakController@update');
+    $router->delete('/kontraks/{kontrak_id}', 'KontrakController@delete');
     
     // pelaksanaan
     $router->get('/pelaksanaans', 'PelaksanaanController@index');
@@ -83,9 +84,12 @@ $router->group(['prefix' => 'v1'], function() use($router) {
     $router->get('/pembayarans', 'PembayaranController@index');
     $router->get('/pembayarans/{kontrak_id}', 'PembayaranController@show');
     $router->post('/pembayarans/{kontrak_id}', 'PembayaranController@create');
+    $router->delete('/pembayarans/{kontrak_id}', 'PembayaranController@deleteByKontrak');
 
     $router->get('/materials', 'MaterialController@index');
     $router->post('/materials', 'MaterialController@create');
     $router->post('/materials/{material_id}', 'MaterialController@update');
     $router->delete('/materials/{material_id}', 'MaterialController@delete');
+
+    $router->get('/stats/biaya', 'StatsController@biaya');
 });

@@ -12,6 +12,7 @@ class SkkiMaterial extends Model
         'jumlah',
         'harga',
         'satuan',
-        'skki_id'
+        'skki_id',
+        'prk_id'
     ];
 }

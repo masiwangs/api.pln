@@ -115,28 +115,28 @@ class KontrakController extends Controller
         return $this->response->bad_request();
     }
 
-    // public function delete($pengadaan_id) {
-    //     $pengadaan = Pengadaan::find($pengadaan_id);
+    public function delete($kontrak_id) {
+        $kontrak = Kontrak::find($kontrak_id);
 
-    //     if(!$pengadaan) {
-    //         return $this->response->not_found();
-    //     }
+        if(!$kontrak) {
+            return $this->response->not_found();
+        }
 
-    //     $delete = $pengadaan->delete();
+        $delete = $kontrak->delete();
 
-    //     if($delete) {
-    //         $jasas = PengadaanJasa::where('pengadaan_id', $pengadaan_id)->get();
-    //         foreach ($jasas as $jasa) {
-    //             $jasa->delete();
-    //         }
+        if($delete) {
+            $jasas = KontrakJasa::where('kontrak_id', $kontrak_id)->get();
+            foreach ($jasas as $jasa) {
+                $jasa->delete();
+            }
             
-    //         $materials = PengadaanMaterial::where('pengadaan_id', $pengadaan_id)->get();
-    //         foreach ($materials as $material) {
-    //             $material->delete();
-    //         }
-    //         return $this->response->success();
-    //     }
+            $materials = KontrakMaterial::where('kontrak_id', $kontrak_id)->get();
+            foreach ($materials as $material) {
+                $material->delete();
+            }
+            return $this->response->success();
+        }
 
-    //     return $this->response->bad_request();
-    // }
+        return $this->response->bad_request();
+    }
 }
