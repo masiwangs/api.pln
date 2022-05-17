@@ -20,12 +20,28 @@ class StatsController extends Controller
         $this->response = new ResponseHelper;
     }
 
-    public function biaya() {
-        $prks = Prk::get('id');
-        $skkis = Skki::get('id');
-        $pengadaans = Pengadaan::get('id');
-        $kontraks = Kontrak::get('id');
-        $pembayarans = Pembayaran::get();
+    public function biaya(Request $request) {
+        $prks = Prk::query();
+        $skkis = Skki::query();
+        $pengadaans = Pengadaan::query();
+        $kontraks = Kontrak::query();
+        $pembayarans = Pembayaran::query();
+
+        if($request->basket) {
+            if(in_array($request->basket, [1, 2, 3])) {
+                $prks = $prks->where('basket', $request->basket);
+                $skkis = $skkis->where('basket', $request->basket);
+                $pengadaans = $pengadaans->where('basket', $request->basket);
+                $kontraks = $kontraks->where('basket', $request->basket);
+                $pembayarans = $pembayarans->where('basket', $request->basket);
+            }
+        }
+
+        $prks = $prks->get('id');
+        $skkis = $skkis->get('id');
+        $pengadaans = $pengadaans->get('id');
+        $kontraks = $kontraks->get('id');
+        $pembayarans = $pembayarans->get();
 
         $nominal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
