@@ -10,6 +10,7 @@ class Pembayaran extends Model
     protected $fillable = [
         'nominal',
         'keterangan',
-        'kontrak_id'
+        'kontrak_id',
+        'basket'
     ];
 }
